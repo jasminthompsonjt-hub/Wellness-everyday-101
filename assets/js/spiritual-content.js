@@ -181,7 +181,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const books = await Promise.all(
       markdownFiles.map(async (file) => {
-        const bookResponse = await fetch(file.download_url);
+        const bookResponse = await fetch(file.download_url + "?v=" + Date.now(), {
+  cache: "no-store"
+});
         const text = await bookResponse.text();
         return parseBook(text);
       })
