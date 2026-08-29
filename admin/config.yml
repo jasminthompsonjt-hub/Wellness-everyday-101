@@ -1,5 +1,7 @@
 backend:
   name: github
+  base_url: https://wellness-cms-oauth.wellnesseveryday101.workers.dev
+  auth_endpoint: auth
   repo: jasminthompsonjt-hub/Wellness-everyday-101
   branch: main
 
