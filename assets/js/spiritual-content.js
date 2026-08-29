@@ -125,21 +125,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     "https://api.github.com/repos/jasminthompsonjt-hub/Wellness-everyday-101/contents/content/spiritual/books?ref=main";
 
   function parseBook(text) {
-    const parts = text.split("---");
-    const frontMatter = parts.length >= 3 ? parts[1] : "";
-    const data = {};
+  const parts = text.split("---");
+  const frontMatter = parts.length >= 3 ? parts[1] : "";
+  const data = {};
 
-    frontMatter.split("\n").forEach((line) => {
-      const match = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
-      if (!match) return;
+  const lines = frontMatter.split("\n");
+  let currentKey = null;
+
+  lines.forEach((line) => {
+    const match = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+
+    if (match) {
+      currentKey = match[1];
 
       let value = match[2].trim();
       value = value.replace(/^["']|["']$/g, "");
-      data[match[1]] = value;
-    });
 
-    return data;
-  }
+      data[currentKey] = value;
+      return;
+    }
+
+    if (currentKey && /^\s+/.test(line)) {
+      const continuation = line.trim();
+
+      if (continuation) {
+        data[currentKey] =
+          (data[currentKey] ? data[currentKey] + " " : "") + continuation;
+      }
+    }
+  });
+
+  return data;
+}
 
   function escapeHtml(value = "") {
     return String(value)
