@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://wellnesseveryday101.com/sitemap.xml
