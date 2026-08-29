@@ -1,0 +1,61 @@
+backend:
+  name: github
+  repo: jasminthompsonjt-hub/Wellness-everyday-101
+  branch: main
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "spiritual_articles"
+    label: "Spiritual Articles & Reflections"
+    folder: "content/spiritual/articles"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Featured Image", name: "image", widget: "image", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "spiritual_books"
+    label: "Spiritual Books"
+    folder: "content/spiritual/books"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Book Title", name: "title", widget: "string" }
+      - { label: "Author", name: "author", widget: "string" }
+      - { label: "Book Cover", name: "cover", widget: "image", required: false }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Purchase or Download Link", name: "link", widget: "string", required: false }
+
+  - name: "prayer_encouragement"
+    label: "Prayer & Encouragement"
+    folder: "content/spiritual/prayer"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "spiritual_videos"
+    label: "Videos & Teachings"
+    folder: "content/spiritual/videos"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Video URL", name: "video_url", widget: "string" }
+
+  - name: "spiritual_resources"
+    label: "Downloadable Resources"
+    folder: "content/spiritual/resources"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "File or Download Link", name: "file_url", widget: "string" }
