@@ -117,3 +117,129 @@ document.addEventListener("DOMContentLoaded", async () => {
     `;
   }
 });
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.getElementById("spiritual-books");
+  if (!container) return;
+
+  const apiUrl =
+    "https://api.github.com/repos/jasminthompsonjt-hub/Wellness-everyday-101/contents/content/spiritual/books?ref=main";
+
+  function parseBook(text) {
+    const parts = text.split("---");
+    const frontMatter = parts.length >= 3 ? parts[1] : "";
+    const data = {};
+
+    frontMatter.split("\n").forEach((line) => {
+      const match = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+      if (!match) return;
+
+      let value = match[2].trim();
+      value = value.replace(/^["']|["']$/g, "");
+      data[match[1]] = value;
+    });
+
+    return data;
+  }
+
+  function escapeHtml(value = "") {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error("Could not load spiritual books.");
+    }
+
+    const files = await response.json();
+
+    const markdownFiles = files.filter(
+      (file) => file.type === "file" && file.name.endsWith(".md")
+    );
+
+    const books = await Promise.all(
+      markdownFiles.map(async (file) => {
+        const bookResponse = await fetch(file.download_url);
+        const text = await bookResponse.text();
+        return parseBook(text);
+      })
+    );
+
+    if (!books.length) return;
+
+    books.forEach((data) => {
+      const title =
+        data.title ||
+        data.book_title ||
+        data.bookTitle ||
+        "Spiritual Book";
+
+      const cover =
+        data.cover ||
+        data.book_cover ||
+        data.bookCover ||
+        data.image ||
+        "";
+
+      const description =
+        data.description || data.summary || "";
+
+      const link =
+        data.link ||
+        data.purchase_link ||
+        data.download_link ||
+        data.purchase_or_download_link ||
+        "";
+
+      const card = document.createElement("article");
+
+      card.style.marginTop = "28px";
+      card.style.padding = "24px";
+      card.style.borderRadius = "18px";
+      card.style.background = "#ffffff";
+      card.style.boxShadow = "0 8px 24px rgba(0,0,0,.08)";
+
+      card.innerHTML = `
+        ${
+          cover
+            ? `<img src="${escapeHtml(cover)}"
+                 alt="${escapeHtml(title)}"
+                 style="width:100%;max-width:260px;height:auto;border-radius:12px;margin-bottom:18px;">`
+            : ""
+        }
+
+        <h3>${escapeHtml(title)}</h3>
+
+        ${
+          data.author
+            ? `<p><strong>By ${escapeHtml(data.author)}</strong></p>`
+            : ""
+        }
+
+        ${
+          description
+            ? `<p style="line-height:1.7;">${escapeHtml(description)}</p>`
+            : ""
+        }
+
+        ${
+          link
+            ? `<p><a class="btn btn-gold"
+                 href="${escapeHtml(link)}"
+                 target="_blank"
+                 rel="noopener">View Book</a></p>`
+            : ""
+        }
+      `;
+
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+});
